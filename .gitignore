@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local VLM server and models (large binaries and weights)
+/llama_server/
+/llama_models/
+/vlm_cache/
+*.zip

@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tello Autopilot Web Console</title>
+    <!-- Importing high-end futuristic and tech fonts from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- FUTURISTIC DEEP-TECH DESIGN SYSTEM --- */
+        :root {
+            --bg-color: #030408;
+            --grid-color: rgba(0, 240, 255, 0.03);
+            --card-bg: rgba(10, 13, 26, 0.65);
+            --card-border: rgba(0, 240, 255, 0.15);
+            --text-primary: #f0f4f8;
+            --text-secondary: #7f90a6;
+            --neon-cyan: #00f0ff;
+            --neon-green: #39ff14;
+            --neon-orange: #ff9900;
+            --neon-red: #ff0055;
+            
+            --font-tech: 'Orbitron', sans-serif;
+            --font-label: 'Rajdhani', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'Share Tech Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Tech-Grid mesh background */
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            height: 100vh;
+            max-height: 100vh;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            gap: 15px;
+        }
+
+        /* --- Sleek Cockpit Header --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            background: rgba(8, 10, 18, 0.85);
+            border: 1px solid var(--card-border);
+            border-bottom: 2px solid var(--neon-cyan);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+            backdrop-filter: blur(12px);
+            flex-shrink: 0;
+        }
+
+        header h1 {
+            font-family: var(--font-tech);
+            font-weight: 900;
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+        }
+
+        header p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-family: var(--font-label);
+            letter-spacing: 1px;
+        }
+
+        /* --- Full-Screen Dashboard Grid --- */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 15px;
+            flex-grow: 1;
+            overflow: hidden;
+            max-height: calc(100vh - 80px);
+        }
+
+        /* --- Deep-Tech Glassmorphism Panel --- */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.03);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 240, 255, 0.05);
+        }
+
+        .card-title {
+            font-family: var(--font-tech);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+            padding-bottom: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        /* --- Left Column: Adaptive Video Container --- */
+        .video-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .video-container {
+            flex-grow: 1;
+            background: #000000;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            position: relative;
+            height: 100%;
+        }
+
+        .video-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0.4;
+        }
+
+        .video-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            z-index: 1;
+        }
+
+        /* --- Right Column: Structured Layout --- */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Telemetry Items */
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .tele-item {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 6px;
+            padding: 6px 10px;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tele-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 3px; height: 100%;
+            background: var(--neon-cyan);
+            opacity: 0.7;
+        }
+
+        .tele-item-label {
+            font-family: var(--font-label);
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tele-item-value {
+            font-family: var(--font-tech);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-top: 2px;
+            color: var(--text-primary);
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
+        }
+
+        /* Battery progress bar styling */
+        .battery-container {
+            grid-column: span 2;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 6px;
+            padding: 8px 12px;
+        }
+
+        .battery-header {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-label);
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .battery-bar-bg {
+            background: rgba(255, 255, 255, 0.05);
+            height: 10px;
+            border-radius: 3px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 240, 255, 0.05);
+        }
+
+        .battery-bar-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--neon-green), #00ffaa);
+            box-shadow: 0 0 8px rgba(57, 255, 20, 0.4);
+            transition: width 0.4s ease-in-out, background-color 0.4s ease;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 4px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            font-family: var(--font-tech);
+            padding: 9px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-takeoff {
+            background: rgba(0, 240, 255, 0.07);
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+            box-shadow: inset 0 0 5px rgba(0, 240, 255, 0.1);
+        }
+
+        .btn-takeoff:hover:not(:disabled) {
+            background: var(--neon-cyan);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn-land {
+            background: rgba(255, 0, 85, 0.07);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+            box-shadow: inset 0 0 5px rgba(255, 0, 85, 0.1);
+        }
+
+        .btn-land:hover:not(:disabled) {
+            background: var(--neon-red);
+            color: var(--text-primary);
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+        }
+
+        .btn-shutdown {
+            font-family: var(--font-tech);
+            background: rgba(255, 0, 85, 0.03);
+            color: var(--neon-red);
+            border: 1px solid rgba(255, 0, 85, 0.35);
+            margin-top: 6px;
+            width: 100%;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        .btn-shutdown:hover:not(:disabled) {
+            background: var(--neon-red);
+            color: var(--text-primary);
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.5);
+            border-color: var(--neon-red);
+        }
+
+        /* Disabled states */
+        .btn:disabled {
+            opacity: 0.18;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.01) !important;
+            color: var(--text-secondary) !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: none !important;
+        }
+
+        /* --- Tech Keyboard Visualizer --- */
+        .controls-visualizer {
+            display: flex;
+            justify-content: space-around;
+            gap: 12px;
+            padding: 8px;
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 6px;
+        }
+
+        .key-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .key-row {
+            display: flex;
+            gap: 4px;
+        }
+
+        .key {
+            font-family: var(--font-tech);
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.02);
+            transition: all 0.1s ease;
+        }
+
+        .key.active {
+            background: rgba(0, 240, 255, 0.25);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.4), inset 0 0 5px rgba(0, 240, 255, 0.3);
+            border-color: var(--neon-cyan);
+            transform: scale(0.92);
+        }
+
+        .key-group-label {
+            font-family: var(--font-label);
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        /* --- Strictly Bounded VLM Terminal Console --- */
+        .vlm-card {
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100px;
+            max-height: 160px;
+            overflow: hidden;
+        }
+
+        .vlm-console {
+            width: 100%;
+            height: 100%;
+            min-height: 60px;
+            background: rgba(2, 3, 7, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--neon-green);
+            overflow-y: auto;
+            border-left: 3px solid var(--neon-green);
+            text-shadow: 0 0 4px rgba(57, 255, 20, 0.25);
+            line-height: 1.4;
+            position: relative;
+        }
+
+        /* Simulated CRT Terminal Glow Line */
+        .vlm-console::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        /* --- Status Dot --- */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neon-red);
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 8px var(--neon-red);
+        }
+
+        .status-dot.connected {
+            background: var(--neon-green);
+            box-shadow: 0 0 8px var(--neon-green);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.6; box-shadow: 0 0 12px var(--neon-green); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header bar -->
+    <header>
+        <h1>Tello VLM Control Console</h1>
+        <div>
+            <span id="conn-dot" class="status-dot"></span>
+            <span id="conn-status" style="font-size: 0.75rem; font-weight: 600;">DISCONNECTED</span>
+        </div>
+    </header>
+
+    <!-- Main Grid Dashboard -->
+    <div class="dashboard">
+        
+        <!-- Left: Live Video -->
+        <div class="card video-card">
+            <div class="card-title">Live Camera Stream (720p Decoded)</div>
+            <div class="video-container">
+                <img id="video-feed" src="/video_feed" alt="WAITING FOR VIDEO FEED Handshake..." />
+            </div>
+        </div>
+
+        <!-- Right: Telemetry & Manual Pilot -->
+        <div class="right-column">
+            
+            <!-- Sensors Card -->
+            <div class="card">
+                <div class="card-title">Drone Telemetry</div>
+                <div class="telemetry-grid">
+                    
+                    <!-- Battery Progress -->
+                    <div class="battery-container">
+                        <div class="battery-header">
+                            <span>Battery Status</span>
+                            <span id="txt-battery">0%</span>
+                        </div>
+                        <div class="battery-bar-bg">
+                            <div id="bar-battery" class="battery-bar-fill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Temp Card -->
+                    <div class="tele-item">
+                        <div class="tele-item-label">CPU Temp</div>
+                        <div id="txt-temp" class="tele-item-value">0°C</div>
+                    </div>
+
+                    <!-- Flight Time Card -->
+                    <div class="tele-item">
+                        <div class="tele-item-label">Flight Time</div>
+                        <div id="txt-ftime" class="tele-item-value">0 s</div>
+                    </div>
+
+                    <!-- Infrared Height Card -->
+                    <div class="tele-item">
+                        <div class="tele-item-label">Alt (IR/ToF)</div>
+                        <div id="txt-height" class="tele-item-value">0 cm</div>
+                    </div>
+
+                    <!-- Barometer Card -->
+                    <div class="tele-item">
+                        <div class="tele-item-label">Alt (Baro)</div>
+                        <div id="txt-baro" class="tele-item-value">0 cm</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manual Controls Visualizer Card -->
+            <div class="card">
+                <div class="card-title">Manual Flight Pilot</div>
+                
+                <!-- Quick Commands (Takeoff / Land) -->
+                <div class="action-buttons">
+                    <button id="btn-takeoff" class="btn btn-takeoff" onclick="triggerAction('/takeoff')">Takeoff [T]</button>
+                    <button id="btn-land" class="btn btn-land" onclick="triggerAction('/land')" disabled>LAND [Space]</button>
+                </div>
+                <!-- Emergency Shutdown Button -->
+                <button id="btn-shutdown" class="btn btn-shutdown" onclick="triggerShutdown()">Shutdown Console</button>
+
+                <!-- Keyboard Key Layout -->
+                <div class="controls-visualizer">
+                    <!-- Left Stick (Throttle / Yaw) -->
+                    <div class="key-group">
+                        <div class="key-group-label">Throttle & Yaw</div>
+                        <div class="key" id="key-i">I</div>
+                        <div class="key-row">
+                            <div class="key" id="key-j">J</div>
+                            <div class="key" id="key-k">K</div>
+                            <div class="key" id="key-l">L</div>
+                        </div>
+                    </div>
+
+                    <!-- Right Stick (Pitch / Roll) -->
+                    <div class="key-group">
+                        <div class="key-group-label">Pitch & Roll</div>
+                        <div class="key" id="key-w">W</div>
+                        <div class="key-row">
+                            <div class="key" id="key-a">A</div>
+                            <div class="key" id="key-s">S</div>
+                            <div class="key" id="key-d">D</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VLM Assistant Console Logs -->
+            <div class="card vlm-card">
+                <div class="card-title">VLM Co-pilot Analysis</div>
+                <div class="vlm-console" id="console-logs">
+                    [SYSTEM LOG] Dashboard initialized successfully.<br>
+                    [SYSTEM LOG] Listening to key events...<br>
+                    [VLM AGENT] Offline. Waiting for Phase 6 (multiprocessing model server)...
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- --- JAVASCRIPT CONTROL LOGIC --- -->
+    <script>
+        // Track the current keyboard state
+        const keysPressed = {
+            w: false, s: false,
+            a: false, d: false,
+            i: false, k: false,
+            j: false, l: false
+        };
+
+        // Cache for velocities to check for updates
+        let lastSentVelocities = { roll: 0, pitch: 0, throttle: 0, yaw: 0 };
+        let isConnected = false;
+        
+        // Safety guard: prevent command flooding while waiting for API responses
+        let isExecutingAction = false;
+        let isDroneFlying = false;
+
+        // Map key letters to corresponding UI elements
+        const keyMap = {
+            'w': 'key-w', 's': 'key-s',
+            'a': 'key-a', 'd': 'key-d',
+            'i': 'key-i', 'k': 'key-k',
+            'j': 'key-j', 'l': 'key-l'
+        };
+
+        // Capture keyboard events
+        window.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            
+            // Ignore key triggers if already waiting for takeoff or landing APIs
+            if (isExecutingAction) return;
+
+            if (key === 't') {
+                // Takeoff is only permitted when drone is on the ground
+                if (!isDroneFlying) {
+                    triggerAction('/takeoff');
+                }
+            } else if (key === ' ') {
+                e.preventDefault(); // Prevent spacebar from scrolling page
+                // Landing is only permitted when drone is flying
+                if (isDroneFlying) {
+                    triggerAction('/land');
+                }
+            } else if (key in keysPressed) {
+                keysPressed[key] = true;
+                highlightKey(key, true);
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            const key = e.key.toLowerCase();
+            if (key in keysPressed) {
+                keysPressed[key] = false;
+                highlightKey(key, false);
+            }
+        });
+
+        // Highlights keys in the UI
+        function highlightKey(key, active) {
+            const elId = keyMap[key];
+            if (elId) {
+                const el = document.getElementById(elId);
+                if (el) {
+                    if (active) el.classList.add('active');
+                    else el.classList.remove('active');
+                }
+            }
+        }
+
+        // Trigger discrete commands (Takeoff/Land) with safety locks
+        function triggerAction(endpoint) {
+            if (isExecutingAction) return;
+            
+            isExecutingAction = true;
+            updateActionButtonsState(); // Immediately grey out the buttons
+            
+            const actionName = endpoint.substring(1).toUpperCase();
+            logConsole(`[COMMAND] Requesting ${actionName}...`);
+            
+            fetch(endpoint, { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    logConsole(`[DRONE RESPONSE] ${data.message || data.status.toUpperCase()}`);
+                    
+                    // Optimistic update of flying state on success
+                    if (endpoint === '/takeoff') {
+                        isDroneFlying = true;
+                    } else if (endpoint === '/land') {
+                        isDroneFlying = false;
+                    }
+                })
+                .catch(error => {
+                    logConsole(`[ERROR] ${actionName} failed: ${error}`, true);
+                })
+                .finally(() => {
+                    isExecutingAction = false;
+                    updateActionButtonsState(); // Release control lock
+                });
+        }
+
+        // Trigger emergency system shutdown from the browser
+        function triggerShutdown() {
+            if (confirm("Are you sure you want to LAND the drone and SHUTDOWN the server?")) {
+                logConsole("[SYSTEM] Initiating emergency shutdown sequence...");
+                
+                // Immediately disable all buttons to lock the UI
+                isExecutingAction = true;
+                updateActionButtonsState();
+                document.getElementById('btn-shutdown').disabled = true;
+                
+                fetch('/shutdown', { method: 'POST' })
+                    .then(response => {
+                        if (!response.ok) throw new Error("Server communication failed");
+                        return response.json();
+                    })
+                    .then(data => {
+                        logConsole(`[SYSTEM] ${data.message}`);
+                    })
+                    .catch(error => {
+                        logConsole(`[ERROR] Shutdown failed: ${error}`, true);
+                        // Re-enable shutdown button only on error
+                        isExecutingAction = false;
+                        updateActionButtonsState();
+                        document.getElementById('btn-shutdown').disabled = false;
+                    });
+            }
+        }
+
+        // Updates HTML disabled status for takeoff/land buttons
+        function updateActionButtonsState() {
+            const btnTakeoff = document.getElementById('btn-takeoff');
+            const btnLand = document.getElementById('btn-land');
+
+            if (isExecutingAction) {
+                btnTakeoff.disabled = true;
+                btnLand.disabled = true;
+            } else {
+                // If drone is flying, only enable LAND. If on the ground, only enable Takeoff.
+                btnTakeoff.disabled = isDroneFlying;
+                btnLand.disabled = !isDroneFlying;
+            }
+        }
+
+        // Writes log messages into the terminal-like console box
+        function logConsole(message, isError = false) {
+            const el = document.getElementById('console-logs');
+            if (!el) return;
+            const color = isError ? 'var(--neon-red)' : 'var(--neon-green)';
+            el.innerHTML += `<br><span style="color: ${color}">${message}</span>`;
+            // Scroll automatically to the bottom
+            el.scrollTop = el.scrollHeight;
+        }
+
+        // Calculates current velocities based on keysPressed and sends them to backend
+        function sendVelocityControls() {
+            // Never send velocity commands during takeoff or landing sequences
+            if (isExecutingAction) return;
+
+            let roll = 0;      // left / right (-100 to 100)
+            let pitch = 0;     // forward / backward (-100 to 100)
+            let throttle = 0;  // up / down (-100 to 100)
+            let yaw = 0;       // rotate left / right (-100 to 100)
+
+            // Speed intensities (we use 35-40% for safe, controlled movement)
+            const moveSpeed = 35;
+            const yawSpeed = 40;
+
+            // Pitch controls (W/S)
+            if (keysPressed.w) pitch = moveSpeed;
+            if (keysPressed.s) pitch = -moveSpeed;
+
+            // Roll controls (A/D)
+            if (keysPressed.a) roll = -moveSpeed;
+            if (keysPressed.d) roll = moveSpeed;
+
+            // Throttle controls (I/K)
+            if (keysPressed.i) throttle = moveSpeed;
+            if (keysPressed.k) throttle = -moveSpeed;
+
+            // Yaw controls (J/L)
+            if (keysPressed.j) yaw = -yawSpeed;
+            if (keysPressed.l) yaw = yawSpeed;
+
+            // Send ONLY if the velocities have actually changed (On Change policy).
+            // This prevents opening 12 parallel HTTP TCP connections per second,
+            // which completely eliminates Wi-Fi packet congestion on the Tello.
+            const velocitiesChanged = (
+                roll !== lastSentVelocities.roll ||
+                pitch !== lastSentVelocities.pitch ||
+                throttle !== lastSentVelocities.throttle ||
+                yaw !== lastSentVelocities.yaw
+            );
+
+            if (velocitiesChanged) {
+                lastSentVelocities = { roll, pitch, throttle, yaw };
+                
+                fetch('/control', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ roll, pitch, throttle, yaw })
+                })
+                .catch(error => {
+                    console.error("Control API communication failed:", error);
+                });
+            }
+        }
+
+        // Run the control command sender every 80ms (Throttled control loop)
+        setInterval(sendVelocityControls, 80);
+
+        // Fetch telemetry updates from server every 500ms
+        function updateTelemetry() {
+            fetch('/telemetry')
+                .then(response => {
+                    if (!response.ok) throw new Error("Offline");
+                    return response.json();
+                })
+                .then(data => {
+                    // Update connection state
+                    if (!isConnected) {
+                        isConnected = true;
+                        document.getElementById('conn-status').innerText = "CONNECTED";
+                        document.getElementById('conn-status').style.color = "var(--neon-green)";
+                        document.getElementById('conn-dot').classList.add('connected');
+                        logConsole("[SYSTEM] Connected to Tello interface.");
+                    }
+
+                    // Update UI text fields
+                    document.getElementById('txt-battery').innerText = `${data.battery}%`;
+                    document.getElementById('txt-temp').innerText = `${data.temperature}°C`;
+                    document.getElementById('txt-ftime').innerText = `${data.flight_time} s`;
+                    document.getElementById('txt-height').innerText = `${data.height} cm`;
+                    document.getElementById('txt-baro').innerText = `${Math.round(data.barometer)} cm`;
+
+                    // Update flying state dynamically based on height sensors.
+                    // If height is > 15 cm, the drone is flying. 
+                    // This dynamically handles state changes even if commands failed or were processed late.
+                    const sensorIndicatesFlying = (data.height > 15);
+                    if (sensorIndicatesFlying !== isDroneFlying) {
+                        isDroneFlying = sensorIndicatesFlying;
+                        updateActionButtonsState();
+                    }
+
+                    // Update Battery Bar width and color
+                    const bar = document.getElementById('bar-battery');
+                    bar.style.width = `${data.battery}%`;
+                    
+                    if (data.battery >= 50) {
+                        bar.style.backgroundColor = "var(--neon-green)";
+                        bar.style.boxShadow = "0 0 8px rgba(0, 255, 102, 0.3)";
+                    } else if (data.battery >= 15) {
+                        bar.style.backgroundColor = "var(--neon-yellow)";
+                        bar.style.boxShadow = "0 0 8px rgba(255, 204, 0, 0.3)";
+                    } else {
+                        bar.style.backgroundColor = "var(--neon-red)";
+                        bar.style.boxShadow = "0 0 8px rgba(255, 51, 102, 0.3)";
+                        if (data.battery < 15) {
+                            logConsole("[WARNING] Battery level critically low!", true);
+                        }
+                    }
+
+                    // Warn only when it gets hot above 85C operational limit
+                    if (data.temperature > 85) {
+                        logConsole(`[WARNING] CPU temperature is critically high: ${data.temperature}°C. Danger of thermal shutdown!`, true);
+                    }
+                })
+                .catch(err => {
+                    if (isConnected) {
+                        isConnected = false;
+                        document.getElementById('conn-status').innerText = "DISCONNECTED";
+                        document.getElementById('conn-status').style.color = "var(--neon-red)";
+                        document.getElementById('conn-dot').classList.remove('connected');
+                        logConsole("[SYSTEM] Lost connection to server.", true);
+                    }
+                });
+        }
+
+        // Start telemetry polling loop
+        setInterval(updateTelemetry, 500);
+
+        // Track the last received VLM log to prevent duplicate printing
+        let lastVlmLog = "";
+
+        // Poll VLM co-pilot analysis reports from server every 500ms
+        function updateVlmLogs() {
+            fetch('/vlm_log')
+                .then(response => {
+                    if (!response.ok) throw new Error("Offline");
+                    return response.json();
+                })
+                .then(data => {
+                    // If a new valid log is received, print it to the console
+                    if (data.log && data.log !== lastVlmLog) {
+                        lastVlmLog = data.log;
+                        logConsole(`[VLM AGENT] ${data.log}`);
+                    }
+                })
+                .catch(err => {
+                    console.error("VLM log fetch failed:", err);
+                });
+        }
+
+        // Start VLM log polling loop
+        setInterval(updateVlmLogs, 500);
+    </script>
+</body>
+</html>

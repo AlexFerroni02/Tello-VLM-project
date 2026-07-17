@@ -1,0 +1,20 @@
+# --- PyTorch & CUDA Core
+# (Ensure you have CUDA 11.8 or 12.1 installed. For Windows, install PyTorch with CUDA support)
+torch>=2.2.0
+torchvision>=0.17.0
+
+# --- Hugging Face & VLM Tools
+transformers>=4.40.0
+accelerate>=0.28.0
+bitsandbytes>=0.42.0          # Native 4-bit/8-bit quantization on Windows
+huggingface_hub
+pillow>=10.0.0
+numpy>=1.24.0
+einops                        # Required by Moondream2
+
+# --- Computer Vision & Drone Interface
+opencv-python>=4.8.0.0
+djitellopy>=2.4.0
+
+# --- Web Autopilot GUI Dashboard
+flask>=3.0.0                  # Lightweight python web server to serve HTML/JS interface
