@@ -11,6 +11,6 @@ if not exist llama-server.exe (
 )
 
 REM Launch llama-server with GPU offload (ngl 99) and 2048 context length on port 8080
-llama-server.exe -m "..\llama_models\SmolVLM-500M-Instruct-Q8_0.gguf" --mmproj "..\llama_models\mmproj-SmolVLM-500M-Instruct-f16.gguf" -ngl 99 -c 2048 --port 8080
+llama-server.exe -m "..\llama_models\SmolVLM2-2.2B-Instruct-Q4_K_M.gguf" --mmproj "..\llama_models\mmproj-SmolVLM2-2.2B-Instruct-f16.gguf" -ngl 99 -c 2048 --port 8080
 
 pause

@@ -3,8 +3,12 @@
     "python.analysis.extraPaths": [
         "${workspaceFolder}"
     ],
-    "python.analysis.typeCheckingMode": "basic",
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}"
+    ],
+    "python.analysis.useLibraryCodeForTypes": true,
+    "python.analysis.typeCheckingMode": "off",
     "python.analysis.diagnosticSeverityOverrides": {
-        "reportMissingImports": "warning"
+        "reportMissingImports": "none"
     }
 }

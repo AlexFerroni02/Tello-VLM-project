@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tello Autopilot Web Console</title>
     <!-- Importing high-end futuristic and tech fonts from Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
     <style>
         /* --- FUTURISTIC DEEP-TECH DESIGN SYSTEM --- */
         :root {
@@ -19,7 +22,7 @@
             --neon-green: #39ff14;
             --neon-orange: #ff9900;
             --neon-red: #ff0055;
-            
+
             --font-tech: 'Orbitron', sans-serif;
             --font-label: 'Rajdhani', sans-serif;
             --font-body: 'Inter', sans-serif;
@@ -35,7 +38,7 @@
         /* Tech-Grid mesh background */
         body {
             background-color: var(--bg-color);
-            background-image: 
+            background-image:
                 linear-gradient(var(--grid-color) 1px, transparent 1px),
                 linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
             background-size: 30px 30px;
@@ -151,7 +154,10 @@
         .video-container::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 3px, 6px 100%;
             pointer-events: none;
@@ -196,7 +202,10 @@
         .tele-item::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 3px; height: 100%;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
             background: var(--neon-cyan);
             opacity: 0.7;
         }
@@ -394,7 +403,7 @@
 
         /* --- Strictly Bounded VLM Terminal Console --- */
         .vlm-card {
-            flex-grow: 1; 
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             min-height: 100px;
@@ -424,7 +433,10 @@
         .vlm-console::after {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
             background-size: 100% 4px;
             pointer-events: none;
@@ -449,12 +461,25 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.6; box-shadow: 0 0 12px var(--neon-green); }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.6;
+                box-shadow: 0 0 12px var(--neon-green);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <!-- Header bar -->
@@ -468,7 +493,7 @@
 
     <!-- Main Grid Dashboard -->
     <div class="dashboard">
-        
+
         <!-- Left: Live Video -->
         <div class="card video-card">
             <div class="card-title">Live Camera Stream (720p Decoded)</div>
@@ -479,12 +504,12 @@
 
         <!-- Right: Telemetry & Manual Pilot -->
         <div class="right-column">
-            
+
             <!-- Sensors Card -->
             <div class="card">
                 <div class="card-title">Drone Telemetry</div>
                 <div class="telemetry-grid">
-                    
+
                     <!-- Battery Progress -->
                     <div class="battery-container">
                         <div class="battery-header">
@@ -525,11 +550,13 @@
             <!-- Manual Controls Visualizer Card -->
             <div class="card">
                 <div class="card-title">Manual Flight Pilot</div>
-                
+
                 <!-- Quick Commands (Takeoff / Land) -->
                 <div class="action-buttons">
-                    <button id="btn-takeoff" class="btn btn-takeoff" onclick="triggerAction('/takeoff')">Takeoff [T]</button>
-                    <button id="btn-land" class="btn btn-land" onclick="triggerAction('/land')" disabled>LAND [Space]</button>
+                    <button id="btn-takeoff" class="btn btn-takeoff" onclick="triggerAction('/takeoff')">Takeoff
+                        [T]</button>
+                    <button id="btn-land" class="btn btn-land" onclick="triggerAction('/land')" disabled>LAND
+                        [Space]</button>
                 </div>
                 <!-- Emergency Shutdown Button -->
                 <button id="btn-shutdown" class="btn btn-shutdown" onclick="triggerShutdown()">Shutdown Console</button>
@@ -562,14 +589,21 @@
 
             <!-- VLM Assistant Console Logs -->
             <div class="card vlm-card">
-                <div class="card-title">VLM Co-pilot Analysis</div>
+                <div class="card-title"
+                    style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <span>VLM Co-pilot Analysis</span>
+                    <input type="text" id="input-prompt" placeholder="Instruction..."
+                        value="Describe what is in front of the camera in one short sentence, identifying obstacles and path safety."
+                        style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 4px; padding: 3px 8px; font-family: var(--font-body); font-size: 0.65rem; color: var(--text-primary); width: 60%; max-width: 320px;"
+                        onchange="sendUpdatedPrompt(this.value)" />
+                </div>
                 <div class="vlm-console" id="console-logs">
                     [SYSTEM LOG] Dashboard initialized successfully.<br>
                     [SYSTEM LOG] Listening to key events...<br>
                     [VLM AGENT] Offline. Waiting for Phase 6 (multiprocessing model server)...
                 </div>
             </div>
-            
+
         </div>
     </div>
 
@@ -586,7 +620,7 @@
         // Cache for velocities to check for updates
         let lastSentVelocities = { roll: 0, pitch: 0, throttle: 0, yaw: 0 };
         let isConnected = false;
-        
+
         // Safety guard: prevent command flooding while waiting for API responses
         let isExecutingAction = false;
         let isDroneFlying = false;
@@ -602,7 +636,7 @@
         // Capture keyboard events
         window.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
-            
+
             // Ignore key triggers if already waiting for takeoff or landing APIs
             if (isExecutingAction) return;
 
@@ -646,13 +680,13 @@
         // Trigger discrete commands (Takeoff/Land) with safety locks
         function triggerAction(endpoint) {
             if (isExecutingAction) return;
-            
+
             isExecutingAction = true;
             updateActionButtonsState(); // Immediately grey out the buttons
-            
+
             const actionName = endpoint.substring(1).toUpperCase();
             logConsole(`[COMMAND] Requesting ${actionName}...`);
-            
+
             fetch(endpoint, { method: 'POST' })
                 .then(response => {
                     if (!response.ok) {
@@ -662,7 +696,7 @@
                 })
                 .then(data => {
                     logConsole(`[DRONE RESPONSE] ${data.message || data.status.toUpperCase()}`);
-                    
+
                     // Optimistic update of flying state on success
                     if (endpoint === '/takeoff') {
                         isDroneFlying = true;
@@ -683,12 +717,12 @@
         function triggerShutdown() {
             if (confirm("Are you sure you want to LAND the drone and SHUTDOWN the server?")) {
                 logConsole("[SYSTEM] Initiating emergency shutdown sequence...");
-                
+
                 // Immediately disable all buttons to lock the UI
                 isExecutingAction = true;
                 updateActionButtonsState();
                 document.getElementById('btn-shutdown').disabled = true;
-                
+
                 fetch('/shutdown', { method: 'POST' })
                     .then(response => {
                         if (!response.ok) throw new Error("Server communication failed");
@@ -774,15 +808,15 @@
 
             if (velocitiesChanged) {
                 lastSentVelocities = { roll, pitch, throttle, yaw };
-                
+
                 fetch('/control', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ roll, pitch, throttle, yaw })
                 })
-                .catch(error => {
-                    console.error("Control API communication failed:", error);
-                });
+                    .catch(error => {
+                        console.error("Control API communication failed:", error);
+                    });
             }
         }
 
@@ -825,7 +859,7 @@
                     // Update Battery Bar width and color
                     const bar = document.getElementById('bar-battery');
                     bar.style.width = `${data.battery}%`;
-                    
+
                     if (data.battery >= 50) {
                         bar.style.backgroundColor = "var(--neon-green)";
                         bar.style.boxShadow = "0 0 8px rgba(0, 255, 102, 0.3)";
@@ -883,6 +917,28 @@
 
         // Start VLM log polling loop
         setInterval(updateVlmLogs, 500);
+
+        // Send updated VLM prompt to server
+        function sendUpdatedPrompt(newPrompt) {
+            if (!newPrompt.trim()) return;
+            fetch('/update_prompt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: newPrompt })
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to update prompt");
+                    return response.json();
+                })
+                .then(data => {
+                    logConsole(`[SYSTEM] Active prompt updated: "${data.prompt}"`);
+                })
+                .catch(err => {
+                    console.error("Error updating VLM prompt:", err);
+                    logConsole("[SYSTEM ERROR] Failed to update active VLM prompt.", true);
+                });
+        }
     </script>
 </body>
+
 </html>

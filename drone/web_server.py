@@ -32,6 +32,7 @@ drone = None
 vlm_input_queue = None
 vlm_output_queue = None
 latest_vlm_analysis = "Waiting for initial VLM scan..."
+vlm_prompt = "Describe what is in front of the camera in one short sentence, identifying obstacles and path safety."
 
 def generate_video_stream(drone_instance: TelloDrone) -> Generator[bytes, None, None]:
     """
@@ -58,7 +59,11 @@ def generate_video_stream(drone_instance: TelloDrone) -> Generator[bytes, None, 
         vlm_frame = drone_instance.get_vlm_frame()
         if vlm_frame is not None and vlm_input_queue is not None:
             if vlm_input_queue.empty():
-                vlm_input_queue.put_latest(vlm_frame)
+                # Push a packet containing both the frame and the dynamic VLM prompt
+                vlm_input_queue.put_latest({
+                    "frame": vlm_frame,
+                    "prompt": vlm_prompt
+                })
             
         # Convert RGB to BGR for JPEG encoder
         frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
@@ -203,6 +208,20 @@ def vlm_log():
         except Exception:
             pass
     return jsonify({"log": latest_vlm_analysis})
+
+@app.route('/update_prompt', methods=['POST'])
+def update_prompt():
+    """
+    REST API endpoint to dynamically update the active flight prompt sent to the VLM.
+    """
+    global vlm_prompt
+    data = request.json or {}
+    new_prompt = data.get('prompt', '').strip()
+    if new_prompt:
+        vlm_prompt = new_prompt
+        print(f"[SYSTEM] Active VLM flight prompt updated to: {vlm_prompt}")
+        return jsonify({"status": "ok", "prompt": vlm_prompt})
+    return jsonify({"status": "error", "message": "Invalid prompt string"}), 400
 
 def start_server():
     """

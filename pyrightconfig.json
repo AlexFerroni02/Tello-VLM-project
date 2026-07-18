@@ -4,6 +4,6 @@
   "extraPaths": [
     "."
   ],
-  "typeCheckingMode": "basic",
-  "reportMissingImports": "warning"
+  "typeCheckingMode": "off",
+  "reportMissingImports": "none"
 }

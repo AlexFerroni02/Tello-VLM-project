@@ -97,13 +97,16 @@ def vlm_worker_process(input_queue: LatencyQueue, output_queue: Queue, local_fil
 
     try:
         while True:
-            # Read frame from the LatencyQueue (RGB format).
-            # This blocks until a frame is published by the main server process.
-            frame_rgb = input_queue.get()
+            # Read data packet from the LatencyQueue.
+            # This blocks until a packet is published by the main server process.
+            data = input_queue.get()
 
             # Poison pill check: if the main process sends None, terminate cleanly
-            if frame_rgb is None:
+            if data is None:
                 break
+
+            frame_rgb = data["frame"]
+            flight_prompt = data["prompt"]
 
             start_time = time.time()
 
